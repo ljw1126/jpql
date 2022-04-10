@@ -114,10 +114,44 @@ query.setParameter(1, usernameParam);
 - SELECT 절에 조회할 대상을 지정하는 것 
 - 프로젝션 대상 : 엔티티, 임베디드 타입, 스칼라 타입(숫자, 문자 등 기본 데이터 타입)
 - SELECT m FROM Member m -> 엔티티 프로젝션 
-- SELECT m.team FROM Member m -> 엔티티 프로젝션 
-- SELECT m.address FROM Member m -> 임베디드 타입 프로젝션 
+- SELECT m.team FROM Member m -> 엔티티 프로젝션 (묵시적 조인)
+  - 이렇게 입력해도 자체에서 join query 나가는데 
+  - select t from Member m join m.team t  이렇게 하는게 인식하기 좋음 (명시적으로 하는게 좋다)
+- SELECT m.address FROM Member m -> 임베디드 타입 프로젝션 // Address = 임베디드 , 자체 호출하는게 아니라 소속 엔티티 통해 호출 
 - SELECT m.username, m.age FROM Member m -> 스칼라 타입 프로젝션 
 - DISTINCT 로 중복제거
+
+#### 프로젝션 - 여러값 조회 
+> SELECt m.username, m.age FROM Member m
+
+``` 
+// 1. Query 타입으로 조회 
+      List resultList = em.createQuery("select m.username, m.age from Member m").getResultList();
+
+      Object o = resultList.get(0);
+      Object[] resultObjects = (Object[])o;
+      System.out.println("username =" + resultObjects[0]);
+      System.out.println("age =" + resultObjects[1]);
+      
+// 2. Object[] 타입으로 조회 
+   
+      List<Object[]> resultList2 = em.createQuery("select m.username, m.age from Member m").getResultList();
+
+      Object[] resultObjects2 = resultList2.get(0);
+      System.out.println("username =" + resultObjects2[0]);
+      System.out.println("age =" + resultObjects2[1]);
+
+// 3. new 명령어로 조회 
+   - 단순 값을 DTO로 바로 조회 
+     SELECT new jpabook.jpql.UserDTO(m.username, m.age) FROM Member m
+   - 패키지 명을 포함한 전체 클래스명 입력 -> 텍스트가 길어지니 단점이기도 함  
+   - 순서와 타입이 일치하는 생성자 필요 
+    
+      List<MemberDTO> memberDTOs = em.createQuery("select new jpql.MemberDTO(m.username, m.age) from Member m").getResultList();
+      MemberDTO memberDTO = memberDTOs.get(0);
+      System.out.println("username =" + memberDTO.getUsername());
+      System.out.println("age =" + memberDTO.getAge());
+```
 
 ### 4. 페이징 
 
