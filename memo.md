@@ -154,6 +154,18 @@ query.setParameter(1, usernameParam);
 ```
 
 ### 4. 페이징 
+- JPA는 페이징을 다음 두 API로 추상화 
+  - hibernate.dialect 방언 설정에 따라 알아서 페이징 처리 query 만들어서 실행해줌  
+- **setFirstResult(int startPosition)** : 조회 시작 위치 (0부터 시작)
+- **setMaxResults(int maxResult)** : 조회할 데이터 수 
+
+``` 
+// 방언만 수정하면 추상화된 JPA가 알아서 query 만들어줌 -> 우린 표준 스펙만 맞춰주면 됨 
+ List<Member> result = em.createQuery("select m from Member m Order by m.age desc", Member.class)
+                            .setFirstResult(1)
+                            .setMaxResults(10)
+                            .getResultList();
+```
 
 ### 5. 조인 
 
