@@ -1,9 +1,7 @@
 package jpql;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
+import javax.persistence.*;
+import java.util.List;
 
 public class JpaMain {
 
@@ -18,7 +16,21 @@ public class JpaMain {
 
             Member member = new Member();
             member.setUsername("member1");
+            member.setAge(10);
             em.persist(member);
+
+            TypedQuery<Member> findMember = em.createQuery("select m from Member m", Member.class);
+            TypedQuery<String> findUsername = em.createQuery("select m.username from Member m", String.class);
+
+            Query findUsername2 = em.createQuery("select m.username from Member m");
+
+            //List<Member> members = findMember.getResultList();
+            //String name = findUsername.getSingleResult();
+            //이후 나온 Spring Data JPA ->(개선) null 또는 Optional 반환해줌
+
+            TypedQuery<Member> query = em.createQuery("select m from Member m where m.username = :username", Member.class);
+            query.setParameter("username", "member1");
+            Member singleResult = query.getSingleResult();
 
             tx.commit();
         } catch(Exception ex) {

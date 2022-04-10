@@ -76,7 +76,48 @@
 - JPQL은 SQL을 추상화해서 특정 DB SQL에 의존하지 않는다. 
 - JPQL은 결국 SQL롤 변환된다.
 
+#### 문법 
+- select m from **Member as m** where **m.age** > 18 
+- Entity 와 속성은 대소문자 구분 O (Member, age)
+- JPQL 키워드는 대소문자 구분 x (SELECT, FROM, where)
+- Entity 이름 사용, 테이블 이름 아님(Member)
+- **별칭은 필수(m)** (이때 as 표기는 생략 가능)
+
+#### 집합과 정렬 
+- count(), sum(), avg(), max(), min() // ANSI SQL , 표준 function 지원함 
+- group by, having
+- order by 
+
+#### TypeQuery, Query 
+- TypeQuery<Class> : 반환 타입이 명확할 때 사용 
+- Query : 반환 타입이 명확하지 않을 때 사용 
+
+#### 결과 조회 API 
+- query.getResultList() : 결과가 하나 이상일때, 리스트 반환 
+  - 결과가 없으면 빈 리스트 반환 
+- query.getSingleResult() : **결과가 정확히 하나 나와야 함,** 단일 객체 반환 --- 값이 보장일때 사용, 조심👨‍💻
+  - 결과가 없으면 : javax.persistence.NoResultException
+  - 둘 이상이면 : javax.persistence.NonUniqueResultException
+
+#### 파라미터 바인딩 - 이름기준,위치기반 
+``` 
+# 이름 기준 - 사용 권장 o 
+SELECT m FROM Member m where m.username =:username
+query.setParameter("username", usernameParam);
+
+# 위치 기반 - 사용 권장 x, 순서(position) 밀리면 버그 발생가능 
+ SELECT m FROM Member m where m.username =?1
+query.setParameter(1, usernameParam);
+```
+
 ### 3. 프로젝션(SELECT)
+- SELECT 절에 조회할 대상을 지정하는 것 
+- 프로젝션 대상 : 엔티티, 임베디드 타입, 스칼라 타입(숫자, 문자 등 기본 데이터 타입)
+- SELECT m FROM Member m -> 엔티티 프로젝션 
+- SELECT m.team FROM Member m -> 엔티티 프로젝션 
+- SELECT m.address FROM Member m -> 임베디드 타입 프로젝션 
+- SELECT m.username, m.age FROM Member m -> 스칼라 타입 프로젝션 
+- DISTINCT 로 중복제거
 
 ### 4. 페이징 
 
