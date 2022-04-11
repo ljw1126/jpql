@@ -261,3 +261,37 @@ from Team t
 > select NULLIF(m.username, '관리자') from Member m; // 사용자 이름이 '관리자'면 null을 반환하고 나머지는 본인의 이름 반환
 
 ### 9. JPQL 함수 
+#### JPQL 기본(표준) 함수 
+• CONCAT
+• SUBSTRING
+• TRIM
+• LOWER, UPPER
+• LENGTH
+• LOCATE
+• ABS, SORT, MOD
+• SIZE, INDEX(JPA 용도)  // SIZE() : 양방향 일떄 collection size, INDEX : 거의 안쓰는게 좋음 
+
+#### 사용자 정의 함수 호출 
+• hibernate 는 사용 전 방언에 추가해야함
+• 사용하는 DB 방언을 상속받고, 사용자 정의 함수를 등록한다 
+> select function('group_concat', i.name) from Item i 
+> select group_concat(m.username) from Member m      // hibernate 표현 방식 지원 , 인텔리제이 에러 뜨면 꺼버리기 
+
+// MySQL57Dialect 클래스(hibernate 패키지) 보면 this.registerFunction(..) 함수 등록되어 있는게 있음
+``` 
+package dialect;
+
+import org.hibernate.dialect.H2Dialect;
+import org.hibernate.dialect.function.StandardSQLFunction;
+import org.hibernate.type.StandardBasicTypes;
+
+public class MyH2Dialect extends H2Dialect {
+
+    public MyH2Dialect() {
+        registerFunction("group_concat", new StandardSQLFunction("group_concat", StandardBasicTypes.STRING));
+    }
+}
+
+//persistence.xml 에서 수정하면 custom 방언 사용가능
+<property name="hibernate.dialect" value="dialect.MyH2Dialect"/>
+```
