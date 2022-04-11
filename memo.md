@@ -217,9 +217,22 @@ query.setParameter(1, usernameParam);
 • JPA 표준 스펙에서는 WHERE, HAVING 절에서만 서브 쿼리 사용 가능
 • SELECT 절도 가능 (hibernate 에서 지원)
 • **FROM 절의 서브 쿼리는 현재 JPQL 에서 불가능 → 조인으로 풀 수 있으면 풀어서 해결**  // from 절 sub query 안되서 불편했다함
-  - 방안) join 사용 , query 2번 날리거나, native query 쓰거나 
+  - 방안) join 사용 || query 2번 날리거나 || native query 쓰거나 
   
 ### 7. JPQL 타입 표현과 기타식 
+#### JPQL 타입 표현
+• 문자 : 'HELLO', 'She"s'  // 홑따옴표 안에 
+• 숫자 : 10L(Long), 10D(Double), 10F(Float)
+• Boolean : TRUE, FALSE
+• ENUM : jpabook.MemberType.ADMIN (패키지명 포함해서 다 넣어야 함)   // queryDSL 쓰거나, 다른 방법으로 개선 가능  
+• 엔티티 타입 : TYPE(m) = Member (상속 관계에서 사용) // 캐스팅 같은거라네 , 상속 관계 편 다시 보기 
+
+#### JPQL 기타 
+• SQL과 문법이 같은식
+• EXISTS, IN
+• AND, OR, NOT
+• =, >, >=, <, <=, <>
+• BETWEEN, LIKE, IS NULL 등등
 
 ### 8. 조건식(CASE 등등)
 
