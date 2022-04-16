@@ -13,27 +13,54 @@ public class JpaMain {
         tx.begin();
 
         try {
+            Team teamA = new Team();
+            teamA.setName("teamA");
+            em.persist(teamA);
 
+            Team teamB = new Team();
+            teamB.setName("teamB");
+            em.persist(teamB);
 
-            Team team = new Team();
-            team.setName("teamA");
-            em.persist(team);
+            Member member1 = new Member();
+            member1.setUsername("member1");
+            member1.setAge(10);
+            member1.setTeam(teamA);
+            em.persist(member1);
 
-            Member member = new Member();
-            member.setUsername("member1");
-            member.setAge(10);
-            member.setTeam(team);
+            Member member2 = new Member();
+            member2.setUsername("member2");
+            member2.setAge(10);
+            member2.setTeam(teamB);
+            em.persist(member2);
 
-            em.persist(member);
+            Member member3 = new Member();
+            member3.setUsername("member3");
+            member3.setAge(10);
+            member3.setTeam(teamB);
+            em.persist(member3);
 
-            em.flush();
-            em.clear();
+            Member member4 = new Member();
+            member4.setUsername("member4");
+            member4.setAge(10);
+            em.persist(member4); // member4는 team에 값이 없어 join 된게 없으니 select x
 
-            String query = "select m from Member m inner join m.team t";
-            List<Member> result = em.createQuery(query, Member.class)
-                            .setFirstResult(1)
-                            .setMaxResults(10)
+            String jpql = "select m from Member m join fetch m.team";
+            List<Member> members = em.createQuery(jpql, Member.class)
                             .getResultList();
+
+            for(Member m : members) {
+                System.out.println(m.toString());
+            }
+
+            String jpql2 = "select t from Team t join fetch t.members where t.name = 'teamA' ";
+            List<Team> teams = em.createQuery(jpql2, Team.class).getResultList();
+
+            for(Team team : teams) {
+                System.out.println("teamname = " + team.getName() + ", team = " + team);
+                for(Member member : team.getMembers()) {
+                    System.out.println("->username =" + member.getUsername() + ", member =" + member);
+                }
+            }
 
             tx.commit();
         } catch(Exception ex) {

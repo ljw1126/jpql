@@ -10,6 +10,8 @@
             <property name="javax.persistence.jdbc.password" value=""/>
             <property name="javax.persistence.jdbc.url" value="jdbc:h2:tcp://localhost/~/test"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
+            <!-- custom function 등록시 dialect.MyH2Dialect 으로 value 수정하면 됨-->
+            <!-- org.hibernate.dialect.Oracle12cDialect-->
             <!-- 옵션 -->
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.format_sql" value="true"/>
