@@ -514,12 +514,22 @@ private List<Member> members = new ArrayList<>();
 • (point) 여러 테이블을 조인해서 엔티티가 가진 모양이 아닌 전혀 다른 결과를 내야 하면,
   패치 조인 보다 일반 조인을 사용하고 필요한 데이터들만 조회해서 DTO로 반환하는 것이 효과적
 
-### 4. 다형성 쿼리 
+### 4. 다형성 쿼리 -- 덜 중요 
+#### TYPE 
+• 조회 대상을 특정 자식으로 한정
+• 예) Item 중에 Book, Movie만 조회해라
+• (JPQL) select i from Item i where **type(i)** in (Book, Movie)
+• -> (실제 동작 SQL) select i from i where i.DTYPE in ('B', 'M')    // enum 이면 
 
+#### TREAT(JPA2.1)
+• 자바의 타입 캐스팅과 유사 
+• 상속 구조에서 부모 타입을 특정 자식 타입으로 다룰 때 사용 
+• FROM, WHERE, SELECT(hibernate 지원) 사용
+• 예) 부모인 Item과 자식 Book이 있다.
+    • (jpql) select i from item i where treat(i as Book).author = 'kim'
+    • ->(실제 동작 sql) select i.* from Item i where i.DTYPE = 'B' and i.author = 'kim'
 
-
-
-### 5. 엔티티 직접 사용 
+### 5. 엔티티 직접 사용
 
 
 
